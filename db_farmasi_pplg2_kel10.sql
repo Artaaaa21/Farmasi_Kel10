@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 14 Okt 2026 pada 16.11
--- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
+-- Generation Time: Oct 16, 2026 at 05:52 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tb_golongan_obat`
+-- Table structure for table `tb_golongan_obat`
 --
 
 CREATE TABLE `tb_golongan_obat` (
@@ -33,7 +33,7 @@ CREATE TABLE `tb_golongan_obat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tb_golongan_obat`
+-- Dumping data for table `tb_golongan_obat`
 --
 
 INSERT INTO `tb_golongan_obat` (`id_golongan`, `nama_golongan`) VALUES
@@ -45,7 +45,7 @@ INSERT INTO `tb_golongan_obat` (`id_golongan`, `nama_golongan`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tb_log_farmasi`
+-- Table structure for table `tb_log_farmasi`
 --
 
 CREATE TABLE `tb_log_farmasi` (
@@ -56,7 +56,7 @@ CREATE TABLE `tb_log_farmasi` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tb_log_farmasi`
+-- Dumping data for table `tb_log_farmasi`
 --
 
 INSERT INTO `tb_log_farmasi` (`id_log`, `nama_operasi`, `rincian`, `waktu_eksekusi`) VALUES
@@ -69,7 +69,7 @@ INSERT INTO `tb_log_farmasi` (`id_log`, `nama_operasi`, `rincian`, `waktu_ekseku
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tb_obat`
+-- Table structure for table `tb_obat`
 --
 
 CREATE TABLE `tb_obat` (
@@ -82,20 +82,25 @@ CREATE TABLE `tb_obat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tb_obat`
+-- Dumping data for table `tb_obat`
 --
 
 INSERT INTO `tb_obat` (`id_obat`, `id_golongan`, `id_pemasok`, `nama_obat`, `harga_satuan`, `stok`) VALUES
 ('ob1', 'gol1', 'PBF1', 'Paracetamol 500mg', 5000, 100),
+('ob10', 'gol1', 'PBF2', 'OBH Combi Batuk', 18500, 65),
 ('ob2', 'gol1', 'PBF2', 'Antasida Tablet', 4000, 80),
 ('ob3', 'gol2', 'PBF3', 'Vitamin C', 12000, 50),
 ('ob4', 'gol3', 'PBF4', 'Amoxicillin 500mg', 10000, 60),
-('ob5', 'gol4', 'PBF1', 'Tolak Angin', 3500, 120);
+('ob5', 'gol4', 'PBF1', 'Tolak Angin', 3500, 120),
+('ob6', 'gol1', 'PBF2', 'Ibuprofen 400mg', 6000, 75),
+('ob7', 'gol2', 'PBF3', 'Cetirizine 10mg', 8000, 90),
+('ob8', 'gol3', 'PBF1', 'Promag Tablet', 8500, 110),
+('ob9', 'gol4', 'PBF4', 'Cefadroxil 500mg', 15000, 40);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tb_pasien_pembeli`
+-- Table structure for table `tb_pasien_pembeli`
 --
 
 CREATE TABLE `tb_pasien_pembeli` (
@@ -107,20 +112,22 @@ CREATE TABLE `tb_pasien_pembeli` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tb_pasien_pembeli`
+-- Dumping data for table `tb_pasien_pembeli`
 --
 
 INSERT INTO `tb_pasien_pembeli` (`id_pasien`, `nama_pasien`, `jenis_kelamin`, `alamat`, `tanggal_daftar`) VALUES
-('pas1', 'Messi Datvansa', 'L', 'Jl. Merdeka No. 10', '2026-10-01'),
-('pas2', 'Rakhmat Dika', 'L', 'Jl. Diponegoro No. 15', '2026-10-02'),
+('pas1', 'Aura', 'P', 'Jl. Merdeka No. 10', '2026-10-01'),
+('pas2', 'Nopia', 'P', 'Jl. Diponegoro No. 15', '2026-10-02'),
 ('pas3', 'Rizky Praama', 'L', 'Jl. Pahlawan No. 21', '2026-10-03'),
 ('pas4', 'Riyandi', 'L', 'Jl. Ahmad Yani No. 8', '2026-10-04'),
-('pas5', 'Dhanis', 'L', 'Jl. Gajah Mada No. 12', '2026-10-05');
+('pas5', 'Dhanis', 'L', 'Jl. Gajah Mada No. 12', '2026-10-05'),
+('pas6', 'Vita', 'P', 'Jl. Sudirman No. 45', '2026-10-06'),
+('pas7', 'Ares', 'L', 'Jl. Pemuda No. 18', '2026-10-07');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tb_pemasok_pbf`
+-- Table structure for table `tb_pemasok_pbf`
 --
 
 CREATE TABLE `tb_pemasok_pbf` (
@@ -131,7 +138,7 @@ CREATE TABLE `tb_pemasok_pbf` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tb_pemasok_pbf`
+-- Dumping data for table `tb_pemasok_pbf`
 --
 
 INSERT INTO `tb_pemasok_pbf` (`id_pemasok`, `nama_pemasok`, `kota_asal`, `kontak`) VALUES
@@ -143,7 +150,7 @@ INSERT INTO `tb_pemasok_pbf` (`id_pemasok`, `nama_pemasok`, `kota_asal`, `kontak
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tb_pengguna`
+-- Table structure for table `tb_pengguna`
 --
 
 CREATE TABLE `tb_pengguna` (
@@ -155,7 +162,7 @@ CREATE TABLE `tb_pengguna` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tb_pengguna`
+-- Dumping data for table `tb_pengguna`
 --
 
 INSERT INTO `tb_pengguna` (`id_user`, `username`, `password`, `nama_lengkap`, `role`) VALUES
@@ -166,7 +173,7 @@ INSERT INTO `tb_pengguna` (`id_user`, `username`, `password`, `nama_lengkap`, `r
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tb_transaksi_obat`
+-- Table structure for table `tb_transaksi_obat`
 --
 
 CREATE TABLE `tb_transaksi_obat` (
@@ -180,7 +187,7 @@ CREATE TABLE `tb_transaksi_obat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tb_transaksi_obat`
+-- Dumping data for table `tb_transaksi_obat`
 --
 
 INSERT INTO `tb_transaksi_obat` (`id_transaksi`, `id_pasien`, `id_obat`, `tanggal_transaksi`, `jumlah_beli`, `total_bayar`, `status_transaksi`) VALUES
@@ -195,19 +202,19 @@ INSERT INTO `tb_transaksi_obat` (`id_transaksi`, `id_pasien`, `id_obat`, `tangga
 --
 
 --
--- Indeks untuk tabel `tb_golongan_obat`
+-- Indexes for table `tb_golongan_obat`
 --
 ALTER TABLE `tb_golongan_obat`
   ADD PRIMARY KEY (`id_golongan`);
 
 --
--- Indeks untuk tabel `tb_log_farmasi`
+-- Indexes for table `tb_log_farmasi`
 --
 ALTER TABLE `tb_log_farmasi`
   ADD PRIMARY KEY (`id_log`);
 
 --
--- Indeks untuk tabel `tb_obat`
+-- Indexes for table `tb_obat`
 --
 ALTER TABLE `tb_obat`
   ADD PRIMARY KEY (`id_obat`),
@@ -215,26 +222,26 @@ ALTER TABLE `tb_obat`
   ADD KEY `id_pemasok` (`id_pemasok`);
 
 --
--- Indeks untuk tabel `tb_pasien_pembeli`
+-- Indexes for table `tb_pasien_pembeli`
 --
 ALTER TABLE `tb_pasien_pembeli`
   ADD PRIMARY KEY (`id_pasien`);
 
 --
--- Indeks untuk tabel `tb_pemasok_pbf`
+-- Indexes for table `tb_pemasok_pbf`
 --
 ALTER TABLE `tb_pemasok_pbf`
   ADD PRIMARY KEY (`id_pemasok`);
 
 --
--- Indeks untuk tabel `tb_pengguna`
+-- Indexes for table `tb_pengguna`
 --
 ALTER TABLE `tb_pengguna`
   ADD PRIMARY KEY (`id_user`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- Indeks untuk tabel `tb_transaksi_obat`
+-- Indexes for table `tb_transaksi_obat`
 --
 ALTER TABLE `tb_transaksi_obat`
   ADD PRIMARY KEY (`id_transaksi`),
@@ -242,28 +249,28 @@ ALTER TABLE `tb_transaksi_obat`
   ADD KEY `id_obat` (`id_obat`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `tb_log_farmasi`
+-- AUTO_INCREMENT for table `tb_log_farmasi`
 --
 ALTER TABLE `tb_log_farmasi`
   MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `tb_obat`
+-- Constraints for table `tb_obat`
 --
 ALTER TABLE `tb_obat`
   ADD CONSTRAINT `tb_obat_ibfk_1` FOREIGN KEY (`id_golongan`) REFERENCES `tb_golongan_obat` (`id_golongan`),
   ADD CONSTRAINT `tb_obat_ibfk_2` FOREIGN KEY (`id_pemasok`) REFERENCES `tb_pemasok_pbf` (`id_pemasok`);
 
 --
--- Ketidakleluasaan untuk tabel `tb_transaksi_obat`
+-- Constraints for table `tb_transaksi_obat`
 --
 ALTER TABLE `tb_transaksi_obat`
   ADD CONSTRAINT `tb_transaksi_obat_ibfk_1` FOREIGN KEY (`id_pasien`) REFERENCES `tb_pasien_pembeli` (`id_pasien`),
