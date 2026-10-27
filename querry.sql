@@ -95,7 +95,6 @@ FROM tb_obat;
 SELECT MAX(total_bayar) AS total_harga_tertinggi
 FROM tb_transaksi_obat;
 
-
 --- Kueri Having
 -- 1. Pemasok yang menyuplai lebih dari 2 jenis obat
 SELECT p.nama_pemasok, COUNT(o.id_obat) AS jumlah_obat
