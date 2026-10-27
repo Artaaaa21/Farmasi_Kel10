@@ -20,10 +20,24 @@ SELECT stok, nama_obat
 FROM tb_obat
 WHERE stok BETWEEN 50 AND 150;
 
+-- C. Menggunakan Kueri ORDER BY
+
+-- 1. Mengurutkan data obat berdasarkan harga termahal ke termurah (DESC)
+SELECT * FROM tb_obat
+ORDER BY harga_satuan DESC;
+
+-- 2. Mengurutkan data obat berdasarkan nama secara alfabet A-Z (ASC)
+SELECT * FROM tb_obat
+ORDER BY nama_obat ASC;
+
+-- 3. Mengurutkan data pasien berdasarkan tanggal daftar terbaru
+SELECT * FROM tb_pasien_pembeli
+ORDER BY tanggal_daftar DESC;
+
 -- 2. Kueri FILTER BETWEEN
 
 
---- Penggunaan Fungsi Agregat COUNT, SUM, AVG, MAX, MIN[cite: 12, 15]
+--- Penggunaan Fungsi Agregat COUNT, SUM, AVG, MAX, MIN
 
 --- Kueri Agregat SUM
 -- 1. Total Pendapatan dari transaksi obat yang sudah selesai
