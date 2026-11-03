@@ -8,7 +8,7 @@
 -- --------------------------------------------------------
 
 -- a. INNER JOIN Eksplisit (Menampilkan transaksi lengkap dengan nama pasien dan nama obat)
-
+-- kelompok 10 : Riyandi,Owen,Ghani 
 
 SELECT 
     t.id_transaksi, 
@@ -109,3 +109,4 @@ FROM tb_pasien_pembeli p
 WHERE NOT EXISTS (
     SELECT 1 FROM tb_transaksi_obat t WHERE t.id_pasien = p.id_pasien
 );
+-- pembimbing pj : messi datvansa
