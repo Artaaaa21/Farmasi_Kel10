@@ -8,6 +8,8 @@
 -- --------------------------------------------------------
 
 -- a. INNER JOIN Eksplisit (Menampilkan transaksi lengkap dengan nama pasien dan nama obat)
+
+
 SELECT 
     t.id_transaksi, 
     p.nama_pasien, 
@@ -86,6 +88,8 @@ WHERE id_pasien IN (
 );
 
 -- c. Subquery Komparasi Multi-Nilai (ANY / ALL): Mencari obat dengan stok lebih besar dari SELURUH obat golongan 3
+
+
 SELECT nama_obat, stok 
 FROM tb_obat
 WHERE stok > ALL (
