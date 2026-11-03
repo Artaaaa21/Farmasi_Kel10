@@ -3,7 +3,7 @@
 -- Tahap 3: Fungsi Agregasi & Grouping (Modul 4)
 -- Database : db_farmasi_pplg2_kel10
 -- Kelompok : 10 (Riyandi, Owen, Ghani)
--- Sumber isi: querry.sql (commit 0e616bd) -- dipisah per tahap,
+-- Sumber isi: querry.sql (commit Riyandi) -- dipisah per tahap,
 --             kueri asli dipertahankan, ditambah yang belum ada.
 -- ========================================================
 
