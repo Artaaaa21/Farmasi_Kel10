@@ -3,7 +3,7 @@
 -- Tahap 4: Relasi Multi-Tabel (JOIN & UNION) - Modul 5
 -- Database : db_farmasi_pplg2_kel10
 -- Kelompok : 10 (Riyandi, Owen, Ghani)
--- Sumber isi: querry.sql (commit 0e616bd) -- dipisah per tahap.
+-- Sumber isi: querry.sql (commit Riyandi) -- dipisah per tahap.
 -- ========================================================
 
 USE db_farmasi_pplg2_kel10;
