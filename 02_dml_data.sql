@@ -1,6 +1,6 @@
 -- 02_dml_data.sql
 -- ========================================================
--- Tahap 2  : DML - Pengisian Data (Modul 3: SQL DML Lanjutan)
+-- Tahap 2  : DML - Pengisian Data (Modul 3 : SQL DML Lanjutan)
 -- Database : db_farmasi_pplg2_kel10
 -- Kelompok : 10 (Riyandi, Owen, Ghani)
 -- Prasyarat: 01_ddl_init.sql sudah dijalankan.
