@@ -1,6 +1,6 @@
 -- 01_ddl_init.sql
 -- ========================================================
--- Tahap 1  : Inisialisasi Database & DDL (Modul 1 & 2: DDL & Relasi)
+-- Tahap 1  : Inisialisasi Database & DDL (Modul 1 & 2 : DDL & Relasi)
 -- Database : db_farmasi_pplg2_kel10
 -- Kelompok : 10 (Riyandi, Owen, Ghani)
 -- Server   : MariaDB 10.4.x -> collation utf8mb4_general_ci
