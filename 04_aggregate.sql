@@ -1,10 +1,9 @@
--- ========================================================
 -- 04_aggregate.sql
--- Tahap 3: Fungsi Agregasi & Grouping (Modul 4)
+-- ========================================================
+-- Tahap 3  : Fungsi Agregasi & Grouping (Modul 4 : Aggregate Function)
 -- Database : db_farmasi_pplg2_kel10
 -- Kelompok : 10 (Riyandi, Owen, Ghani)
--- Sumber isi: querry.sql (commit Riyandi) -- dipisah per tahap,
---             kueri asli dipertahankan, ditambah yang belum ada.
+-- Prasyarat: 01, 02, dan 03 sudah dijalankan
 -- ========================================================
 
 USE db_farmasi_pplg2_kel10;
@@ -35,6 +34,8 @@ SELECT SUM(harga_satuan * stok) AS total_nilai_aset
 FROM tb_obat;
 
 -- A5. Nilai aset per golongan
+--     Hasil: gol1 2472500, gol3 1535000, gol2 1320000, gol4 1020000
+--     (jumlah keempatnya = 6347500, cocok dengan A4)
 SELECT id_golongan,
        SUM(harga_satuan * stok) AS nilai_aset
 FROM tb_obat
@@ -83,10 +84,10 @@ FROM tb_transaksi_obat;
 -- D. MIN
 -- ========================================================
 
--- D1. Harga obat termurah      Hasil: 3500
+-- D1. Harga obat termurah        Hasil: 3500
 SELECT MIN(harga_satuan) AS harga_terendah FROM tb_obat;
 
--- D2. Stok paling sedikit      Hasil: 40
+-- D2. Stok paling sedikit        Hasil: 40
 SELECT MIN(stok) AS stok_terendah FROM tb_obat;
 
 -- D3. Tanggal transaksi pertama  Hasil: 2026-10-06
@@ -97,10 +98,10 @@ FROM tb_transaksi_obat;
 -- E. MAX
 -- ========================================================
 
--- E1. Harga obat termahal       Hasil: 18500
+-- E1. Harga obat termahal        Hasil: 18500
 SELECT MAX(harga_satuan) AS harga_tertinggi FROM tb_obat;
 
--- E2. Stok paling banyak        Hasil: 120
+-- E2. Stok paling banyak         Hasil: 120
 SELECT MAX(stok) AS stok_tertinggi FROM tb_obat;
 
 -- E3. Nilai total bayar terbesar Hasil: 20000
@@ -122,6 +123,7 @@ GROUP BY g.id_golongan, g.nama_golongan
 ORDER BY total_stok DESC;
 
 -- F2. Rata-rata harga per golongan
+--     Hasil: gol1 8375, gol2 10000, gol3 9250, gol4 9250
 SELECT id_golongan,
        COUNT(*)             AS jumlah_obat,
        AVG(harga_satuan)    AS rata_rata_harga,
@@ -130,6 +132,10 @@ FROM tb_obat
 GROUP BY id_golongan;
 
 -- F3. Jumlah obat per pemasok
+--     Hasil: PBF1 3, PBF2 3, PBF3 2, PBF4 2 (total 10)
+--     Catatan: semua pemasok menyuplai obat, sehingga LEFT JOIN di sini
+--     menghasilkan baris yang sama dengan INNER JOIN. Bukti outer join
+--     yang sesungguhnya ada di 05_join_union.sql (obat belum terjual).
 SELECT p.nama_pemasok, COUNT(o.id_obat) AS jumlah_obat
 FROM tb_pemasok_pbf p
 LEFT JOIN tb_obat o ON p.id_pemasok = o.id_pemasok
@@ -154,6 +160,7 @@ SELECT COUNT(*) AS semua_baris,
 FROM tb_obat;
 
 -- G4. Kombinasi dua kolom unik: pasangan golongan + pemasok
+--     Hasil: 7 pasangan unik
 SELECT DISTINCT id_golongan, id_pemasok
 FROM tb_obat
 ORDER BY id_golongan, id_pemasok;
@@ -178,18 +185,19 @@ JOIN tb_obat o ON g.id_golongan = o.id_golongan
 GROUP BY g.id_golongan, g.nama_golongan
 HAVING SUM(o.stok) > 200;
 
--- H3. Golongan dengan rata-rata harga di atas 8000
---     Hasil: gol3 (9250), gol4 (9250)
---     (menggantikan contoh "kota asal pasien" yang selalu kosong,
---      karena kolom alamat tiap pasien unik)
+-- H3. Golongan dengan rata-rata harga di atas 9000
+--     Hasil: 3 baris -- gol2 10000, gol3 9250, gol4 9250
+--     (gol1 rata-rata 8375 sehingga tersaring keluar oleh HAVING)
 SELECT id_golongan,
        AVG(harga_satuan) AS rata_rata_harga
 FROM tb_obat
 GROUP BY id_golongan
-HAVING AVG(harga_satuan) > 8000;
+HAVING AVG(harga_satuan) > 9000
+ORDER BY rata_rata_harga DESC;
 
 -- H4. WHERE + GROUP BY + HAVING + ORDER BY dalam satu kueri
 --     Hanya transaksi SELESAI, nominal > 12000
+--     Hasil: ob4 (20000), ob5 (14000)
 SELECT id_obat,
        SUM(jumlah_beli) AS total_terjual,
        SUM(total_bayar) AS total_omzet
