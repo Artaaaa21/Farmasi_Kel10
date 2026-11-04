@@ -1,14 +1,24 @@
--- ========================================================
 -- 03_query_select.sql
--- Tahap 2: SELECT, Pattern Matching, Filtering & Sorting
+-- ========================================================
+-- Tahap 2  : SELECT, Pattern Matching, Filtering & Sorting
 -- Database : db_farmasi_pplg2_kel10
 -- Kelompok : 10 (Riyandi, Owen, Ghani)
 -- Prasyarat: 01_ddl_init.sql dan 02_dml_data.sql sudah dijalankan.
--- Catatan  : collation utf8mb4_general_ci membuat LIKE tidak
---            membedakan huruf besar/kecil ('%M%' = '%m%').
+-- Catatan  : collation utf8mb4_general_ci membuat LIKE tidak membedakan huruf besar/kecil ('%M%' = '%m%').       
 -- ========================================================
 
 USE db_farmasi_pplg2_kel10;
+
+-- --------------------------------------------------------
+-- PERSIAPAN DATA: nama obat ber-FORTE
+-- Satu baris UPDATE saja, supaya jumlah baris tb_obat tetap 10.
+-- Harga dan stok tidak diubah, sehingga hasil agregasi di 04
+-- dan 06 tidak terpengaruh.
+-- --------------------------------------------------------
+
+UPDATE tb_obat
+SET nama_obat = 'OBH Combi Batuk FORTE'
+WHERE id_obat = 'ob10';
 
 -- ========================================================
 -- A. PATTERN MATCHING dengan LIKE
@@ -34,7 +44,7 @@ FROM tb_obat
 WHERE nama_obat LIKE '%mg';
 
 -- A4. Wildcard di tengah: nama mengandung "Combi"
---     Hasil: OBH Combi Batuk (1 baris)
+--     Hasil: OBH Combi Batuk FORTE (1 baris)
 SELECT id_obat, nama_obat, harga_satuan
 FROM tb_obat
 WHERE nama_obat LIKE '%Combi%';
@@ -52,18 +62,24 @@ FROM tb_obat
 WHERE nama_obat LIKE '%500mg%'
    OR nama_obat LIKE '%400mg%';
 
+-- A7. Pola wajib modul: LIKE '%FORTE%'
+--     Hasil: OBH Combi Batuk FORTE (1 baris)
+SELECT id_obat, nama_obat, harga_satuan
+FROM tb_obat
+WHERE nama_obat LIKE '%FORTE%';
+
 -- ========================================================
 -- B. NEGASI POLA dengan NOT LIKE
 -- ========================================================
 
 -- B1. Semua obat yang namanya TIDAK mengandung "mg"
 --     Hasil: Antasida Tablet, Vitamin C, Tolak Angin,
---            Promag Tablet, OBH Combi Batuk (5 baris)
+--            Promag Tablet, OBH Combi Batuk FORTE (5 baris)
 SELECT id_obat, nama_obat
 FROM tb_obat
 WHERE nama_obat NOT LIKE '%mg%';
 
--- B2. NOT LIKE digabung LIKE: yang tidak berakhiran "mg"
+-- B2. NOT LIKE digabung LIKE: tidak berakhiran "mg"
 --     tetapi mengandung "Tablet"
 --     Hasil: Antasida Tablet, Promag Tablet (2 baris)
 SELECT id_obat, nama_obat
@@ -71,18 +87,26 @@ FROM tb_obat
 WHERE nama_obat NOT LIKE '%mg'
   AND nama_obat LIKE '%Tablet%';
 
+-- B3. Padanan negasi dari A7: seluruh obat selain yang ber-FORTE
+--     Hasil: 9 baris
+SELECT id_obat, nama_obat
+FROM tb_obat
+WHERE nama_obat NOT LIKE '%FORTE%';
+
 -- ========================================================
 -- C. FILTER RENTANG NUMERIK dengan BETWEEN
 -- ========================================================
 
 -- C1. Stok antara 50 dan 150 (inklusif: 50 dan 150 ikut)
---     Hasil: 6 baris
+--     Hanya Cefadroxil (40) yang di luar rentang.
+--     Hasil: 9 baris
 SELECT nama_obat, stok
 FROM tb_obat
 WHERE stok BETWEEN 50 AND 150
 ORDER BY stok ASC;
 
 -- C2. Pembanding: padanan BETWEEN memakai >= dan <=
+--     Hasil: 9 baris (sama dengan C1)
 SELECT nama_obat, stok
 FROM tb_obat
 WHERE stok >= 50 AND stok <= 150
@@ -113,6 +137,7 @@ WHERE tanggal_transaksi BETWEEN '2026-10-07' AND '2026-10-07';
 
 -- D3. Pola aman bila kolom bertipe DATETIME (bukan DATE):
 --     >= batas awal AND < hari setelah batas akhir
+--     Hasil: id_log 1, 2, 3, 4 (4 baris)
 SELECT nama_operasi, waktu_eksekusi
 FROM tb_log_farmasi
 WHERE waktu_eksekusi >= '2026-10-06 00:00:00'
@@ -171,6 +196,7 @@ WHERE id_golongan = 'gol3'
 ORDER BY nama_obat;
 
 -- F3. UPDATE bersyarat banyak kondisi: stok rendah + golongan herbal
+--     Hasil: Cefadroxil stok 40 -> 90
 UPDATE tb_obat
 SET stok = stok + 50
 WHERE stok < 50
@@ -200,19 +226,6 @@ FROM tb_obat
 WHERE id_golongan IN ('gol3','gol4')
 ORDER BY id_obat;
 
-
--- ========================================================
--- OPSIONAL: contoh '%FORTE%' sesuai modul.
--- Data saat ini belum punya obat ber-FORTE. Aktifkan blok ini
--- bila guru meminta contoh FORTE secara spesifik.
--- ========================================================
--- INSERT INTO tb_obat (id_obat, id_golongan, id_pemasok, nama_obat, harga_satuan, stok)
--- VALUES ('ob11', 'gol1', 'PBF2', 'Paracetamol FORTE', 7500, 45);
---
--- SELECT id_obat, nama_obat, harga_satuan
--- FROM tb_obat
--- WHERE nama_obat LIKE '%FORTE%';
---
--- SELECT id_obat, nama_obat
--- FROM tb_obat
--- WHERE nama_obat NOT LIKE '%FORTE%';
+-- Catatan: UPDATE nama FORTE di bagian PERSIAPAN berada di luar
+-- transaksi F, jadi tetap tersimpan setelah ROLLBACK (memang
+-- diinginkan agar kueri A7 dan B3 punya data).
