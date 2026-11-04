@@ -1,35 +1,27 @@
--- =====================================================================
 -- 07_stored_procedure.sql
--- Screenshot eksekusi CALL sp_name()
--- Pekan 7 (16 - 20 Nov 2026) - Tahap 6: Stored Procedure
--- Modul 7: Stored Procedure
--- Database : db_farmasi_pplg2_kel10
--- Isi      : A. CREATE PROCEDURE & DELIMITER (dasar)
---            B. Parameter mode IN
---            C. Parameter mode OUT
---            D. Parameter mode INOUT
---            E. Percabangan IF-THEN-ELSE
---            F. Melihat / menghapus procedure
+-- =====================================================================
+-- Tahap 6    : Stored Procedure (Modul 7 : Stored Procedure)
+-- Database   : db_farmasi_pplg2_kel10
+-- Kelompok   : 10 (Riyandi, Owen, Ghani)
+-- Prasyarat  : 01, 02, 03 sudah dijalankan.
+-- Isi        : A. CREATE PROCEDURE & DELIMITER
+--              B. Parameter IN  | C. Parameter OUT | D. Parameter INOUT
+--              E. Percabangan IF-THEN-ELSE (termasuk sp_cek_ketersediaan_stok)
+--              F. Melihat / menghapus procedure
+--              G. Pembersihan data uji
 --
--- CATATAN PENTING:
--- 1. Nama parameter diawali "p_" dan variabel lokal diawali "v_" agar
---    tidak bentrok dengan nama kolom tabel (mis. stok, id_obat).
--- 2. Di phpMyAdmin (tab SQL): jalankan per bagian. Jika perintah
---    DELIMITER menimbulkan error, hapus baris DELIMITER dari kode,
---    lalu ubah kotak "Delimiter" di bawah editor SQL menjadi //
---    (bukan ;) sebelum klik Go.
--- 3. Setelah CREATE PROCEDURE, jalankan perintah CALL-nya lalu
---    screenshot hasilnya untuk logbook.
+-- CATATAN :
+-- 1. Parameter diawali "p_", variabel lokal diawali "v_", agar tidak
+--    bentrok dengan nama kolom (stok, id_obat).
+-- 2. Di phpMyAdmin : jika baris DELIMITER menimbulkan error, hapus baris
+--    DELIMITER dan ubah kotak "Delimiter" di bawah editor menjadi //.
+-- 3. Setelah CREATE PROCEDURE, jalankan CALL lalu screenshot hasilnya.
 -- =====================================================================
 
 USE db_farmasi_pplg2_kel10;
 
-
 -- =====================================================================
 -- A. DEKLARASI STORED PROCEDURE DASAR (CREATE PROCEDURE, DELIMITER)
--- DELIMITER diganti sementara menjadi // supaya titik koma (;) di dalam
--- badan procedure tidak dianggap sebagai akhir perintah CREATE.
--- Procedure tanpa parameter ditulis dengan tanda kurung kosong ().
 -- =====================================================================
 
 -- A1. Menampilkan seluruh data obat
@@ -42,11 +34,11 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi (screenshot). Hasil diharapkan: 5 baris obat
+-- Eksekusi. Hasil diharapkan: 10 baris obat
 CALL sp_tampil_obat();
 
 
--- A2. Menampilkan data obat beserta nama golongan dan nama pemasok
+-- A2. Data obat beserta nama golongan dan nama pemasok
 DROP PROCEDURE IF EXISTS sp_tampil_obat_lengkap;
 DELIMITER //
 CREATE PROCEDURE sp_tampil_obat_lengkap()
@@ -59,13 +51,12 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi (screenshot). Hasil diharapkan: 5 baris dengan nama golongan & pemasok
+-- Eksekusi. Hasil diharapkan: 10 baris dengan nama golongan & pemasok
 CALL sp_tampil_obat_lengkap();
 
 
 -- =====================================================================
 -- B. PARAMETER MODE IN
--- Nilai dikirim DARI luar KE dalam procedure (hanya dibaca).
 -- =====================================================================
 
 -- B1. Menampilkan obat berdasarkan golongan
@@ -79,13 +70,15 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: Paracetamol 500mg dan Antasida Tablet
+-- Eksekusi. Hasil: 4 baris -- Paracetamol, Antasida, Ibuprofen,
+--           OBH Combi Batuk FORTE
 CALL sp_obat_by_golongan('gol1');
--- Hasil diharapkan: Amoxicillin 500mg
+-- Hasil: 2 baris -- Amoxicillin 500mg, Promag Tablet
 CALL sp_obat_by_golongan('gol3');
 
 
 -- B2. Menambah pasien baru (tanggal daftar otomatis hari ini)
+--     Memakai id 'pas8' karena pas1-pas7 sudah terpakai di 02.
 DROP PROCEDURE IF EXISTS sp_tambah_pasien;
 DELIMITER //
 CREATE PROCEDURE sp_tambah_pasien(
@@ -100,9 +93,12 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: pas6 muncul di tabel
-CALL sp_tambah_pasien('pas6', 'Pasien Uji', 'P', 'Jl. Uji Coba No. 1');
-SELECT * FROM tb_pasien_pembeli ORDER BY id_pasien DESC;
+-- Eksekusi. Hasil: pas8 (Pasien Uji) muncul, total pasien menjadi 8
+CALL sp_tambah_pasien('pas8', 'Pasien Uji', 'P', 'Jl. Uji Coba No. 1');
+SELECT id_pasien, nama_pasien, tanggal_daftar
+FROM tb_pasien_pembeli
+ORDER BY id_pasien DESC
+LIMIT 3;
 
 
 -- B3. Menambah stok obat (jumlah negatif = mengurangi)
@@ -120,16 +116,13 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: stok ob1 menjadi 110
+-- Eksekusi. Hasil: stok ob1 100 -> 110, lalu kembali 100
 CALL sp_tambah_stok('ob1', 10);
--- Kembalikan ke semula (stok ob1 kembali 100)
 CALL sp_tambah_stok('ob1', -10);
 
 
 -- =====================================================================
 -- C. PARAMETER MODE OUT
--- Procedure MENGEMBALIKAN nilai ke luar lewat variabel sesi (@nama).
--- Nilai OUT diambil dengan SELECT @nama setelah CALL.
 -- =====================================================================
 
 -- C1. Menghitung jumlah jenis obat
@@ -142,7 +135,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: total_obat = 5
+-- Eksekusi. Hasil: total_obat = 10
 CALL sp_hitung_obat(@total_obat);
 SELECT @total_obat AS total_obat;
 
@@ -157,7 +150,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: total_pendapatan = 68000 (data awal)
+-- Eksekusi. Hasil: 68000 (selama tran1-tran5 saja yang ada)
 CALL sp_total_pendapatan(@total_pendapatan);
 SELECT @total_pendapatan AS total_pendapatan;
 
@@ -179,15 +172,13 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: Amoxicillin 500mg | 10000 | 60
+-- Eksekusi. Hasil: Amoxicillin 500mg | 10000 | 60
 CALL sp_detail_obat('ob4', @nama, @harga, @stok);
 SELECT @nama AS nama_obat, @harga AS harga_satuan, @stok AS stok;
 
 
 -- =====================================================================
 -- D. PARAMETER MODE INOUT
--- Nilai dikirim MASUK, diubah di dalam procedure, lalu dikembalikan
--- KELUAR melalui variabel yang sama. Variabel harus diberi nilai awal.
 -- =====================================================================
 
 -- D1. Menaikkan harga sebesar persentase tertentu
@@ -199,7 +190,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: harga_baru = 11000
+-- Eksekusi. Hasil: harga_baru = 11000
 SET @harga_baru = 10000;
 CALL sp_naikkan_harga(@harga_baru, 10);
 SELECT @harga_baru AS harga_baru;
@@ -220,7 +211,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: 100 -> 180 -> 230
+-- Eksekusi. Hasil: 100 -> 180 -> 230 (stok ob1 100, ob2 80, ob3 50)
 SET @total_stok = 0;
 CALL sp_akumulasi_stok('ob1', @total_stok);
 SELECT @total_stok AS total_stok;   -- 100
@@ -232,12 +223,10 @@ SELECT @total_stok AS total_stok;   -- 230
 
 -- =====================================================================
 -- E. PERCABANGAN KONDISIONAL (IF-THEN-ELSEIF-ELSE)
--- Struktur:
---   IF kondisi THEN ... ELSEIF kondisi THEN ... ELSE ... END IF;
 -- =====================================================================
 
 -- E1. Mengecek status stok obat
--- stok = 0 -> Habis | stok <= 50 -> Menipis | selain itu -> Aman
+-- stok = 0 -> Habis | stok <= 50 -> Menipis | lainnya -> Aman
 DROP PROCEDURE IF EXISTS sp_cek_stok;
 DELIMITER //
 CREATE PROCEDURE sp_cek_stok(IN p_id_obat VARCHAR(8), OUT p_status VARCHAR(30))
@@ -260,14 +249,15 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: ob1 = Aman, ob3 = Menipis, xx = Obat tidak ditemukan
+-- Eksekusi. Hasil: ob1 = Aman (100), ob3 = Menipis (50),
+--           xx = Obat tidak ditemukan
 CALL sp_cek_stok('ob1', @status);  SELECT @status AS status_stok;
 CALL sp_cek_stok('ob3', @status);  SELECT @status AS status_stok;
 CALL sp_cek_stok('xx',  @status);  SELECT @status AS status_stok;
 
 
 -- E2. Menentukan kategori harga obat
--- harga < 5000 -> Murah | 5000 s/d 9999 -> Sedang | >= 10000 -> Mahal
+-- harga < 5000 -> Murah | 5000-9999 -> Sedang | >= 10000 -> Mahal
 DROP PROCEDURE IF EXISTS sp_kategori_harga;
 DELIMITER //
 CREATE PROCEDURE sp_kategori_harga(IN p_id_obat VARCHAR(8), OUT p_kategori VARCHAR(30))
@@ -290,15 +280,14 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan: ob2 = Murah, ob1 = Sedang, ob3 = Mahal
+-- Eksekusi. Hasil: ob2 = Murah (4000), ob1 = Sedang (5000),
+--           ob3 = Mahal (12000)
 CALL sp_kategori_harga('ob2', @kategori);  SELECT @kategori AS kategori_harga;
 CALL sp_kategori_harga('ob1', @kategori);  SELECT @kategori AS kategori_harga;
 CALL sp_kategori_harga('ob3', @kategori);  SELECT @kategori AS kategori_harga;
 
 
 -- E3. Transaksi pembelian obat dengan validasi bertahap
--- Cek pasien, cek obat, cek jumlah, cek stok; jika semua lolos maka
--- simpan transaksi dan kurangi stok. Hasilnya dikembalikan di p_pesan.
 DROP PROCEDURE IF EXISTS sp_beli_obat;
 DELIMITER //
 CREATE PROCEDURE sp_beli_obat(
@@ -344,8 +333,8 @@ BEGIN
 END //
 DELIMITER ;
 
--- Eksekusi. Hasil diharapkan:
--- 1) Berhasil: transaksi disimpan (total 25000, stok ob1 100 -> 95)
+-- Eksekusi. Hasil yang diharapkan:
+-- 1) Berhasil (25000 = 5 x 5000), stok ob1 100 -> 95
 CALL sp_beli_obat('tran6', 'pas1', 'ob1', 5, @pesan);   SELECT @pesan AS pesan;
 -- 2) Gagal: stok tidak cukup (sisa 50)
 CALL sp_beli_obat('tran7', 'pas1', 'ob3', 999, @pesan); SELECT @pesan AS pesan;
@@ -355,8 +344,49 @@ CALL sp_beli_obat('tran8', 'pas1', 'xx', 1, @pesan);    SELECT @pesan AS pesan;
 CALL sp_beli_obat('tran9', 'xx', 'ob1', 1, @pesan);     SELECT @pesan AS pesan;
 
 -- Bukti perubahan data (screenshot)
-SELECT * FROM tb_transaksi_obat ORDER BY id_transaksi DESC;
+SELECT id_transaksi, id_pasien, id_obat, jumlah_beli, total_bayar
+FROM tb_transaksi_obat
+ORDER BY id_transaksi DESC;
 SELECT id_obat, nama_obat, stok FROM tb_obat WHERE id_obat = 'ob1';
+
+
+-- E4. PROCEDURE WAJIB PENUGASAN: sp_cek_ketersediaan_stok()
+-- Parameter IN (id obat + jumlah yang ingin dibeli) dan logika
+-- IF-THEN-ELSE untuk memutuskan ketersediaan stok.
+DROP PROCEDURE IF EXISTS sp_cek_ketersediaan_stok;
+DELIMITER //
+CREATE PROCEDURE sp_cek_ketersediaan_stok(
+    IN p_id_obat VARCHAR(8),
+    IN p_jumlah  INT
+)
+BEGIN
+    DECLARE v_stok INT DEFAULT NULL;
+
+    SELECT stok INTO v_stok
+    FROM tb_obat
+    WHERE id_obat = p_id_obat;
+
+    IF v_stok IS NULL THEN
+        SELECT p_id_obat AS id_obat, 'Obat tidak ditemukan' AS keterangan;
+    ELSEIF p_jumlah <= 0 THEN
+        SELECT p_id_obat AS id_obat, 'Jumlah permintaan tidak valid' AS keterangan;
+    ELSEIF p_jumlah <= v_stok THEN
+        SELECT p_id_obat AS id_obat, v_stok AS stok_tersedia,
+               'Stok TERSEDIA' AS keterangan;
+    ELSE
+        SELECT p_id_obat AS id_obat, v_stok AS stok_tersedia,
+               CONCAT('Stok TIDAK CUKUP, kurang ', p_jumlah - v_stok, ' unit') AS keterangan;
+    END IF;
+END //
+DELIMITER ;
+
+-- Eksekusi. Hasil yang diharapkan:
+-- 1) ob1, minta 20 -> Stok TERSEDIA (stok 95 setelah E3)
+CALL sp_cek_ketersediaan_stok('ob1', 20);
+-- 2) ob3, minta 100 -> Stok TIDAK CUKUP, kurang 50 unit
+CALL sp_cek_ketersediaan_stok('ob3', 100);
+-- 3) xx -> Obat tidak ditemukan
+CALL sp_cek_ketersediaan_stok('xx', 5);
 
 
 -- =====================================================================
@@ -367,7 +397,7 @@ SELECT id_obat, nama_obat, stok FROM tb_obat WHERE id_obat = 'ob1';
 SHOW PROCEDURE STATUS WHERE Db = 'db_farmasi_pplg2_kel10';
 
 -- Melihat isi/definisi satu procedure
-SHOW CREATE PROCEDURE sp_cek_stok;
+SHOW CREATE PROCEDURE sp_cek_ketersediaan_stok;
 
 -- Contoh menghapus procedure:
 -- DROP PROCEDURE IF EXISTS sp_tampil_obat;
@@ -375,8 +405,13 @@ SHOW CREATE PROCEDURE sp_cek_stok;
 
 -- =====================================================================
 -- G. PEMBERSIHAN DATA UJI (jalankan setelah semua screenshot selesai)
--- Mengembalikan data ke kondisi awal.
+-- Mengembalikan data ke kondisi 02: 10 obat, 7 pasien, 5 transaksi.
 -- =====================================================================
 DELETE FROM tb_transaksi_obat WHERE id_transaksi = 'tran6';
+DELETE FROM tb_pasien_pembeli WHERE id_pasien   = 'pas8';
 UPDATE tb_obat SET stok = 100 WHERE id_obat = 'ob1';
-DELETE FROM tb_pasien_pembeli WHERE id_pasien = 'pas6';
+
+-- Bukti data kembali seperti semula (10 / 7 / 5)
+SELECT 'tb_obat' AS tabel, COUNT(*) AS jumlah FROM tb_obat
+UNION ALL SELECT 'tb_pasien_pembeli', COUNT(*) FROM tb_pasien_pembeli
+UNION ALL SELECT 'tb_transaksi_obat', COUNT(*) FROM tb_transaksi_obat;
